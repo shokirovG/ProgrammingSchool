@@ -4,7 +4,7 @@ const { kurslar, school } = require("./consts");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const mongoose = require("mongoose");
 const addStudent = require("./models/onlineReg");
-
+const moment = require("moment");
 mongoose.connect(
   `mongodb+srv://programmingschool71782:${process.env.DB_KEY}@cluster0.emoasae.mongodb.net/?retryWrites=true&w=majority`,
   () => {
@@ -13,13 +13,14 @@ mongoose.connect(
 );
 console.log("bot ishladi");
 bot.start((s) => {
+  console.log(moment().subtract(10, "days").calendar());
   s.reply(
     "Assalomu alaykum! Programming School botiga xush kelibsiz.",
     Markup.keyboard([
       ["Bizda mavjud kurslar"],
       ["Programming School haqida"],
       ["Admin bilan bog`lanish"],
-      ["kurslarga online ro`yxatdan o`tish"],
+      ["telefon raqam qoldirish"],
     ])
   );
 
@@ -34,6 +35,16 @@ bot.start((s) => {
           console.log("yangi student qoshildi");
         }
       });
+    }
+    if (ctx.message.text.slice(0, 3) == "+99") {
+      addStudent.create({
+        input: ctx.message.text,
+        date: moment().subtract(10, "days").calendar(),
+      });
+      ctx.telegram.sendMessage(
+        ctx.message.chat.id,
+        "Rahmat sizga tez orada adminlarimiz aloqaga chiqishadi."
+      );
     }
     switch (ctx.message.text) {
       case "Bizda mavjud kurslar": {
@@ -64,15 +75,8 @@ Menejer: Fayozov Samandar TEL: +998 94 026 42 20
         break;
       }
 
-      case "kurslarga online ro`yxatdan o`tish": {
-        await ctx.telegram.sendMessage(
-          ctx.message.chat.id,
-          "online ro'xatdan o'tish uchun namuna: (school Muhammadiyev Muhammad pythonKids +998941234567)"
-        );
-        await ctx.telegram.sendMessage(
-          ctx.message.chat.id,
-          "yuqoridagi namunaga qarab botimiz yozingda junating (school so'zini boshiga yozish esdan chiqmasin)"
-        );
+      case "telefon raqam qoldirish": {
+        ctx.telegram.sendMessage(ctx.message.chat.id, "namuna: +998912345678");
 
         break;
       }
