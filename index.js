@@ -4,6 +4,7 @@ const { kurslar, school } = require("./consts");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const mongoose = require("mongoose");
 const addStudent = require("./models/onlineReg");
+const addUser = require("./models/user");
 const moment = require("moment");
 mongoose.connect(
   `mongodb+srv://programmingschool71782:${process.env.DB_KEY}@cluster0.emoasae.mongodb.net/?retryWrites=true&w=majority`,
@@ -13,7 +14,10 @@ mongoose.connect(
 );
 console.log("bot ishladi");
 bot.start((s) => {
-  console.log(moment().subtract(10, "days").calendar());
+  addUser.findOneAndReplace({
+    userName: s.message.chat.username,
+    userId: s.message.chat.id,
+  });
   s.reply(
     "Assalomu alaykum! Programming School botiga xush kelibsiz.",
     Markup.keyboard([
