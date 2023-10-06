@@ -14,10 +14,20 @@ mongoose.connect(
 );
 console.log("bot ishladi");
 bot.start((s) => {
-  addUser.findOneAndReplace({
-    userName: s.message.chat.username,
-    userId: s.message.chat.id,
-  });
+  addUser.find(
+    {
+      userName: s.message.chat.username,
+      userId: s.message.chat.id,
+    },
+    (err, post) => {
+      if (!post.length) {
+        addUser.create({
+          userName: s.message.chat.username,
+          userId: s.message.chat.id,
+        });
+      }
+    }
+  );
   s.reply(
     "Assalomu alaykum! Programming School botiga xush kelibsiz.",
     Markup.keyboard([
